@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Quiz</title>
+    <link rel="stylesheet" href="createquiz.css" />
+    <script src="createquiz.js" defer></script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <h1>Create Quiz</h1>
+      <form id="quiz-form">
+        <input
+          type="text"
+          id="quiz-title"
+          placeholder="Enter Quiz Title"
+          required
+        />
+        <div id="questions-container"></div>
+        <button type="button" id="add-question">+ Add Question</button>
+        <button type="submit" class="submit-btn">Submit Quiz</button>
+        <button id="home-btn" onclick="goHome()">Return to Home</button>
+      </form>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard - Quiz App</title>
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-container">
+        <div class="logo">Quiz App Admin</div>
+        <ul class="nav-links">
+          <li>
+            <a href="../quiz-creation/create-quiz.html">Manage Quizzes</a>
+          </li>
+          <li><button onclick="logout()" class="logout-btn">Logout</button></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="container">
+      <h1>Admin Dashboard</h1>
+      <div class="table-container">
+        <table id="user-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Username</th>
+              <th>Quiz Title</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; 2025 Quiz App. All rights reserved.</p>
+    </footer>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>
