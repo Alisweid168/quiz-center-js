@@ -4,6 +4,7 @@ const email_input = document.getElementById("email-input");
 const password_input = document.getElementById("password-input");
 const repeat_password_input = document.getElementById("repeat-password-input");
 const error_message = document.getElementById("error-message");
+const submit_button = document.getElementById("submit-button");
 
 const admin = {
   firstname: "Admin",
@@ -19,7 +20,64 @@ if (!users.find((u) => u.email === admin.email)) {
   localStorage.setItem("users", JSON.stringify(users));
 }
 
-form.addEventListener("submit", (e) => {
+console.log("users1234");
+function registerUserWithAjax(name, email, password) {
+  console.log("registerUserWithAjax called with:", name, email, password);
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "http://localhost:8000/public/register.php", true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  xhr.onload = function () {
+    console.log("AJAX Response status:", xhr.status, xhr.responseText);
+
+    if (xhr.status >= 200 && xhr.status < 300) {
+      try {
+        const data = JSON.parse(xhr.responseText);
+        if (data.error) {
+          alert(data.error);
+        } else {
+          alert(data.message);
+
+          const user = {
+            firstname: name,
+            email: email,
+            password: password,
+            role: "user",
+            isLoggedIn: false,
+          };
+          const users = JSON.parse(localStorage.getItem("users")) || [];
+          users.push(user);
+          localStorage.setItem("users", JSON.stringify(users));
+          localStorage.setItem("loggedInUserEmail", user.email);
+
+          window.location.href = "../index.html";
+        }
+      } catch (error) {
+        console.error("Error parsing response:", error);
+        alert("Error communicating with server");
+      }
+    } else {
+      console.error("Request failed with status:", xhr.status);
+      alert("Server error - please try again later");
+    }
+  };
+
+  xhr.onerror = function () {
+    console.error("Network error occurred");
+    alert("Network error - please check your connection");
+  };
+
+  const formData = `name=${encodeURIComponent(name)}&email=${encodeURIComponent(
+    email
+  )}&password=${encodeURIComponent(password)}`;
+  xhr.send(formData);
+}
+
+submit_button.addEventListener("click", function (e) {
+  e.preventDefault();
+  console.log("Form submitted");
+
   let errors = [];
 
   if (firstname_input) {
@@ -31,8 +89,6 @@ form.addEventListener("submit", (e) => {
     );
 
     if (errors.length === 0) {
-      e.preventDefault();
-
       const users = JSON.parse(localStorage.getItem("users")) || [];
       const existingUser = users.find((u) => u.email === email_input.value);
 
@@ -41,30 +97,22 @@ form.addEventListener("submit", (e) => {
         return;
       }
 
-      const user = {
-        firstname: firstname_input.value,
-        email: email_input.value,
-        password: password_input.value,
-        role: "user",
-        isLoggedIn: false,
-      };
-
-      users.push(user);
-      localStorage.setItem("users", JSON.stringify(users));
-
-      window.location.href = "Login&signup/login.html";
+      registerUserWithAjax(
+        firstname_input.value,
+        email_input.value,
+        password_input.value
+      );
     }
   } else {
     errors = getLoginFormErrors(email_input.value, password_input.value);
 
     if (errors.length === 0) {
-      e.preventDefault();
-
       const users = JSON.parse(localStorage.getItem("users")) || [];
       const savedUser = users.find(
         (u) =>
           u.email === email_input.value && u.password === password_input.value
       );
+
       if (savedUser) {
         savedUser.isLoggedIn = true;
 
@@ -75,6 +123,7 @@ form.addEventListener("submit", (e) => {
 
         localStorage.setItem("loggedInUserEmail", savedUser.email);
         localStorage.setItem("loggedInUser", JSON.stringify(updatedUsers));
+
         if (
           savedUser.role === "admin" &&
           savedUser.email === admin.email &&
@@ -89,7 +138,6 @@ form.addEventListener("submit", (e) => {
   }
 
   if (errors.length > 0) {
-    e.preventDefault();
     error_message.innerText = errors.join(". ");
   }
 });
